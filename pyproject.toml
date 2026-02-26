@@ -1,0 +1,183 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bbaw-dse-mcp"
+version = "0.1.0"
+description = "MCP Server für dialogischen Zugang zu digitalen wissenschaftlichen Editionen"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Tim Westphal", email = "tim.westphal@bbaw.de" }
+]
+keywords = ["mcp", "digital-humanities", "tei", "exist-db", "scholarly-editions"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "fastmcp>=2.0.0,<2.14.0",
+    "httpx>=0.27.0",
+    "anthropic>=0.40.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "lxml>=5.0.0",
+    "lxml-stubs>=0.5.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.5.0",
+    "mypy>=1.5.0",
+]
+
+[project.scripts]
+bbaw-dse-mcp = "bbaw_dse_mcp.main:main"
+
+[project.urls]
+Repository = "https://github.com/telota/bbaw-dse-mcp"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+bbaw_dse_mcp = ["py.typed"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=bbaw_dse_mcp",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/tests/*", "*/__pycache__/*", "*/site-packages/*"]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "F",     # pyflakes
+    "I",     # isort
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "BLE",   # flake8-blind-except (no bare except:)
+    "C4",    # flake8-comprehensions
+    "C90",   # mccabe complexity
+    "T20",   # flake8-print (no print statements)
+    "SIM",   # flake8-simplify
+    "N",     # pep8-naming
+    "Q",     # flake8-quotes
+    "RUF",   # Ruff-specific rules
+    "ASYNC", # flake8-async
+    "S",     # flake8-bandit (security)
+    "PTH",   # flake8-use-pathlib
+    "ERA",   # eradicate (commented-out code)
+    "PL",    # pylint (includes PLR1702: too-many-nested-blocks)
+    "PERF",  # perflint (performance)
+    "ANN",   # flake8-annotations
+    "ARG",   # flake8-unused-arguments
+    "FBT",   # flake8-boolean-trap (no boolean positional args)
+    "RET",   # flake8-return
+    "TCH",   # flake8-type-checking
+]
+ignore = [
+    "E501",    # line too long (handled by formatter)
+    "PLR0913", # too many arguments
+    "PERF203", # try-except in loop (sometimes necessary)
+    "ANN101",  # missing type annotation for self
+    "ANN102",  # missing type annotation for cls
+]
+
+# Complexity limits (anti-LLM-slop)
+[tool.ruff.lint.mccabe]
+max-complexity = 30
+
+[tool.ruff.lint.pylint]
+max-nested-blocks = 3
+max-branches = 25
+max-statements = 100
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "S101",    # Allow assert in tests
+    "PLR2004", # Allow magic values in tests
+    "ANN",     # Don't require annotations in tests
+    "FBT",     # Allow boolean args in tests
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["bbaw_dse_mcp"]
+combine-as-imports = true
+force-sort-within-sections = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.flake8-type-checking]
+strict = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+namespace_packages = true
+explicit_package_bases = true
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = "bbaw_dse_mcp.*"
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = [
+    "fastmcp",
+    "fastmcp.exceptions",
+]
+ignore_missing_imports = true
