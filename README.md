@@ -148,24 +148,6 @@ Agent: → cs_search_correspondent_network(name="Humboldt, Wilhelm von")
        Cross-edition network across 12 editions: ...
 ```
 
-## Architecture
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│               bbaw-dse-mcp (FastMCP Composed)                │
-├──────────────────────────────────────────────────────────────┤
-│  ┌──────────────────┐  ┌─────────────┐  ┌────────────────┐  │
-│  │  schleiermacher   │  │     mop     │  │  correspsearch │  │
-│  │   19 tools        │  │  17 tools   │  │    8 tools     │  │
-│  └────────┬─────────┘  └──────┬──────┘  └───────┬────────┘  │
-└───────────┼────────────────────┼─────────────────┼───────────┘
-            │                    │                 │
-      ┌─────▼─────┐       ┌─────▼─────┐     ┌─────▼──────┐
-      │  eXist-db  │       │  eXist-db  │     │  REST API  │
-      │  (Ediarum) │       │  (Ediarum) │     │   (CMIF)   │
-      └───────────┘        └───────────┘     └────────────┘
-```
-
 ## Tech Stack
 
 - **[FastMCP](https://gofastmcp.com/) 2.x** — Python MCP server framework
